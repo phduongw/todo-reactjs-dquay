@@ -14,12 +14,42 @@ function App() {
             status: 'Active'
         };
 
-        setTodoList(prev => [...prev, todoInfo])
+        setTodoList(prev => [...prev, todoInfo]);
+        setTodoName('');
     }
 
-    const handleConpleteTask = (id) => {
-        setTodoList(prev => prev.map((todo) => todo.id === id ? {...todo, status: 'Complete'} : todo));
+    const handleCompleteTask = (id) => {
+        setTodoList(function(prev) {
+            const updatedTodoList = prev.map(function(todo) {
+                return todo.id === id ? 
+                {
+                    ...todo, 
+                    status: 'Complete',
+                } : 
+                todo
+            });
+
+            console.log("Updated Todo List ", updatedTodoList)
+            return updatedTodoList;
+        });
     }
+
+    const handleRemoveCompleteTodo = function() {
+        setTodoList(function(prev) {
+            const newTodoList = [];
+            for (let todo of prev) {
+                if (todo.status !== 'Complete') {
+                    newTodoList.push(todo);
+                }
+            }
+    
+            // const newTodoList = prev.filter(function(todo) {
+            //     return todo2.status !== 'Complete';
+            // });
+    
+            return newTodoList;
+        })
+    } 
 
     return (
         <div className="App">
@@ -33,18 +63,20 @@ function App() {
                 <div>
                     <div>
                         <label htmlFor="nameTodo">Todo Name</label>
-                        <input type="text" id="nameTodo" onChange={(e) => setTodoName(e.target.value)}/>
+                        <input value={todoName} type="text" id="nameTodo" onChange={(e) => setTodoName(e.target.value)}/>
                     </div>
                     <button onClick={addTodo}>Thêm</button>
                 </div>
             )}
 
             {filterTodo.map((todo) => (
-                <div key={todo.id} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <p style={{marginRight: '4px'}}>{todo.name}</p>
-                    {todo.status === 'Active' ? <input type='radio' onClick={() => handleConpleteTask(todo.id)}/> : <input type="radio" checked={true} disabled={true}/>}
+                <div key={todo.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <p style={{ marginRight: '4px' }}>{todo.name}</p>
+                    {todo.status === 'Active' ? <input type='radio' onClick={() => handleCompleteTask(todo.id)} /> : <input type="radio" checked={true} disabled={true} />}
                 </div>
             ))}
+
+            {tab === 'Complete' && <button onClick={handleRemoveCompleteTodo}>Clear All</button>}
         </div>
     );
 }
